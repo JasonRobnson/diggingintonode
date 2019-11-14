@@ -1,0 +1,22 @@
+{
+  "name": "diggingintonode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ex1.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JasonRobnson/diggingintonode.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JasonRobnson/diggingintonode/issues"
+  },
+  "homepage": "https://github.com/JasonRobnson/diggingintonode#readme",
+  "dependencies": {
+    "minimist": "^1.2.0"
+  }
+}
