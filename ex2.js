@@ -8,6 +8,8 @@
 const util = require('util');
 const path = require('path');
 const fs = require('fs');
+const Transform = require('stream').Transform;
+
 const args = require('minimist')(process.argv.slice(2), {
 	boolean: ['help'],
 	string: ['file'],
@@ -51,6 +53,15 @@ function printError(msg, includeHelp = false) {
 
 function processFile(inStream) {
 	let outStream = inStream;
+	let upperStream = new Transform({
+		transform(chunk, enc, cb) {
+			this.push(chunk.toString().toUpperCase());
+			cb();
+		},
+	});
+	//Writing to UpperStream(writable stream) from instream (readable stream)
+	outStream = outStream.pipe(upperStream);
+
 	let targetStream = process.stdout;
 	outStream.pipe(targetStream);
 }
