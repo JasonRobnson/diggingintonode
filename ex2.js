@@ -12,7 +12,6 @@ const args = require('minimist')(process.argv.slice(2), {
 	boolean: ['help'],
 	string: ['file'],
 });
-const getStdin = require('get-stdin');
 
 const BASE_PATH = path.resolve(process.env.BASE_PATH || __dirname);
 
@@ -23,18 +22,10 @@ if (process.env.HELLO) {
 if (args.help) {
 	printHelp();
 } else if (args.in || args._.includes('-')) {
-	getStdin()
-		.then(processFile)
-		.catch(printError);
+	processFile(process.stdin);
 } else if (args.file) {
-	fs.readFile(path.join(BASE_PATH, args.file), function onContents(err, contents) {
-		if (err) {
-			printError(err.toString());
-		} else {
-			processFile(contents.toString());
-		}
-	});
-	processFile(path.resolve(args.file));
+	let stream = fs.createReadStream(path.join(BASE_PATH, args.file));
+	processFile(stream);
 } else {
 	printError('Incorrect usage', true);
 }
@@ -58,21 +49,8 @@ function printError(msg, includeHelp = false) {
 	}
 }
 
-function processFile(contents) {
-	// Second param of readFileSync will comfort binary buffter to text, otherwise process.stdout.write will consume and translate the buffer from binnary.
-	// let contents = fs.readFileSync(filepath, 'utf-8');
-
-	//async read that always take a callback witht he first param error
-	// fs.readFile(filepath, function onContents(err, contents) {
-	// 	if (err) {
-	// 		printError(err.toString());
-	// 	} else {
-	// 		// console.log(contents);
-	// 		process.stdout.write(contents);
-	// 	}
-	// });
-
-	//second iteration of this function
-	contents = contents.toUpperCase();
-	process.stdout.write(contents);
+function processFile(inStream) {
+	let outStream = inStream;
+	let targetStream = process.stdout;
+	outStream.pipe(targetStream);
 }
