@@ -11,11 +11,14 @@ const fs = require('fs');
 const Transform = require('stream').Transform;
 
 const args = require('minimist')(process.argv.slice(2), {
-	boolean: ['help'],
+	boolean: ['help', 'in', 'out'],
 	string: ['file'],
 });
 
 const BASE_PATH = path.resolve(process.env.BASE_PATH || __dirname);
+
+//Whatever path that it found the intial file, it will write back to that path with a new file.
+const OUTFILE = path.join(BASE_PATH, 'out.txt');
 
 if (process.env.HELLO) {
 	console.log(process.env.HELLO);
@@ -39,7 +42,8 @@ function printHelp() {
 	console.log('');
 	console.log('--help                  		 			 print help files');
 	console.log('--file={FILENAME}                 process the file');
-	console.log('--in,  -        									 process stdin');
+	console.log('--in,  -        									 print to stdin');
+	console.log('--out,  -        								 print to stdout');
 	console.log('');
 }
 
@@ -53,15 +57,25 @@ function printError(msg, includeHelp = false) {
 
 function processFile(inStream) {
 	let outStream = inStream;
+
 	let upperStream = new Transform({
 		transform(chunk, enc, cb) {
 			this.push(chunk.toString().toUpperCase());
 			cb();
 		},
 	});
+
 	//Writing to UpperStream(writable stream) from instream (readable stream)
 	outStream = outStream.pipe(upperStream);
 
-	let targetStream = process.stdout;
+	let targetStream;
+
+	//handles type of output for stream
+	if (args.out) {
+		targetStream = process.stdout;
+	} else {
+		targetStream = fs.createWriteStream(OUTFILE);
+	}
+
 	outStream.pipe(targetStream);
 }
