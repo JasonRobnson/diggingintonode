@@ -14,6 +14,12 @@ const args = require('minimist')(process.argv.slice(2), {
 });
 const getStdin = require('get-stdin');
 
+const BASE_PATH = path.resolve(process.env.BASE_PATH || __dirname);
+
+if (process.env.HELLO) {
+	console.log(process.env.HELLO);
+}
+
 if (args.help) {
 	printHelp();
 } else if (args.in || args._.includes('-')) {
@@ -21,7 +27,7 @@ if (args.help) {
 		.then(processFile)
 		.catch(printError);
 } else if (args.file) {
-	fs.readFile(path.resolve(args.file), function onContents(err, contents) {
+	fs.readFile(path.join(BASE_PATH, args.file), function onContents(err, contents) {
 		if (err) {
 			printError(err.toString());
 		} else {
