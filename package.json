@@ -18,6 +18,6 @@
   "homepage": "https://github.com/JasonRobnson/diggingintonode#readme",
   "dependencies": {
     "get-stdin": "^7.0.0",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.3"
   }
 }
